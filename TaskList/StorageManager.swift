@@ -24,7 +24,7 @@ class StorageManager {
         return container
     }()
     
-    private let context: NSManagedObjectContext
+    let context: NSManagedObjectContext
     
     private init() {
         context = persistentContainer.viewContext
@@ -39,6 +39,19 @@ class StorageManager {
             complition(.success(tasks))
         } catch let error {
             complition(.failure(error))
+        }
+    }
+    
+    func fetchSearchData(_ searchText: String, complition: (Result<[Task], Error>) -> Void) {
+        let fetchRequest = Task.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "title contains[c] %@", searchText)
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        do {
+            let filteredTasks = try context.fetch(fetchRequest)
+            complition(.success(filteredTasks))
+        } catch let error {
+            complition(.failure(error))
+            
         }
     }
     

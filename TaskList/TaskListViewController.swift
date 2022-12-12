@@ -13,7 +13,18 @@ final class TaskListViewController: UITableViewController {
     
     // MARK: - Private Properties
     private let cellID = "task"
+    private let context = StorageManager.shared.context
     private var tasks: [Task] = []
+    private var filteredTasks: [Task] = []
+    private let searchController = UISearchController(searchResultsController: nil)
+    private var searchBarIsEmty: Bool {
+        guard let text = searchController.searchBar.text else { return false }
+        return text.isEmpty
+    }
+    
+    private var isFiltering: Bool {
+        return searchController.isActive && !searchBarIsEmty
+    }
     
     // MARK: - Override Methods
     override func viewDidLoad() {
@@ -23,22 +34,51 @@ final class TaskListViewController: UITableViewController {
             forCellReuseIdentifier: cellID
         )
         setUpNavigationBar()
+        setupSearchController()
         fetchData()
     }
 }
 
 // MARK: - Private Methods
 extension TaskListViewController {
+    private func setupSearchController() {
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.barTintColor = .brown
+        navigationItem.searchController = searchController
+        definesPresentationContext = true
+        
+        setupTextField()
+    }
+    
+    private func setupTextField() {
+        if let textField = searchController.searchBar.value(forKey: "searchField") as? UITextField {
+            
+            textField.font = UIFont.systemFont(ofSize: 18)
+            textField.textColor = .white
+            textField.autocapitalizationType = .none
+            textField.attributedPlaceholder = NSAttributedString(
+                string: "Search",
+                attributes: [
+                    NSAttributedString.Key.foregroundColor: UIColor(
+                        white: 1.1,
+                        alpha: 0.5
+                    )
+                ]
+            )
+        }
+    }
+    
     private func setUpNavigationBar() {
         title = "Task List"
         navigationController?.navigationBar.prefersLargeTitles = true
         
         let navBarAppearance = UINavigationBarAppearance()
         navBarAppearance.backgroundColor = UIColor(
-            red: 21/255,
-            green: 101/255,
-            blue: 192/255,
-            alpha: 194/255
+            red: 120/255,
+            green: 200/255,
+            blue: 95/255,
+            alpha: 215/255
         )
         navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
         navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
@@ -78,6 +118,20 @@ extension TaskListViewController {
         }
     }
     
+    private func fetchSearchData(_ searchText: String) {
+        StorageManager.shared.fetchSearchData(searchText) { result in
+            switch result {
+            case .success(let filteredTasks):
+                self.filteredTasks = filteredTasks
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
     private func save(_ taskName: String) {
         StorageManager.shared.save(taskName: taskName) { task in
             self.tasks.append(task)
@@ -105,6 +159,8 @@ extension TaskListViewController {
         alert.addAction(cancelAction)
         alert.addTextField { textField in
             textField.placeholder = "New Task"
+            textField.font = UIFont.systemFont(ofSize: 17)
+            textField.translatesAutoresizingMaskIntoConstraints = false
         }
         
         present(alert, animated: true)
@@ -137,13 +193,24 @@ extension TaskListViewController {
 extension TaskListViewController {
     override func tableView(_ tableView: UITableView,
                             numberOfRowsInSection section: Int) -> Int {
-        tasks.count
+        if isFiltering {
+            return filteredTasks.count
+        }
+        
+        return tasks.count
     }
     
     override func tableView(_ tableView: UITableView,
                             cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath)
-        let task = tasks[indexPath.row]
+        var task: Task
+        
+        if isFiltering {
+            task = filteredTasks[indexPath.row]
+        } else {
+            task = tasks[indexPath.row]
+        }
+        
         var content = cell.defaultContentConfiguration()
         content.text = task.title
         cell.contentConfiguration = content
@@ -161,18 +228,36 @@ extension TaskListViewController {
     override func tableView(_ tableView: UITableView,
                             commit editingStyle: UITableViewCell.EditingStyle,
                             forRowAt indexPath: IndexPath) {
-        let task = tasks[indexPath.row]
+        var task: Task
+        
         if editingStyle == .delete {
-            tasks.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .automatic)
-            StorageManager.shared.delete(task: task)
+            if isFiltering {
+                task = filteredTasks[indexPath.row]
+                
+                filteredTasks.remove(at: indexPath.row)
+                tableView.deleteRows(at: [indexPath], with: .automatic)
+                StorageManager.shared.delete(task: task)
+            } else {
+                task = tasks[indexPath.row]
+                
+                tasks.remove(at: indexPath.row)
+                tableView.deleteRows(at: [indexPath], with: .automatic)
+                StorageManager.shared.delete(task: task)
+            }
         }
     }
     
     override func tableView(_ tableView: UITableView,
                             didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let task = tasks[indexPath.row]
+        
+        var task: Task
+        
+        if isFiltering {
+            task = filteredTasks[indexPath.row]
+        } else {
+            task = tasks[indexPath.row]
+        }
         
         let alert = UIAlertController(
             title: "Update",
@@ -193,14 +278,19 @@ extension TaskListViewController {
         alert.addTextField { textField in
             textField.placeholder = "Task"
             textField.text = task.title
+            textField.font = UIFont.systemFont(ofSize: 17)
         }
         
         present(alert, animated: true)
     }
 }
 
-
-
+// MARK: - UISearchResultsUpdating
+extension TaskListViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        fetchSearchData(searchController.searchBar.text ?? "")
+    }
+}
 
 
 
