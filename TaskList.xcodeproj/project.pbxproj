@@ -13,6 +13,7 @@
 		A000D3AC293A7A9F00F02AB6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A000D3AB293A7A9F00F02AB6 /* Assets.xcassets */; };
 		A000D3AF293A7A9F00F02AB6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A000D3AD293A7A9F00F02AB6 /* LaunchScreen.storyboard */; };
 		A01D1E81293C4AB100389D1D /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01D1E80293C4AB100389D1D /* StorageManager.swift */; };
+		A038583F29485A7300F18943 /* AlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A038583E29485A7300F18943 /* AlertController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		A000D3AE293A7A9F00F02AB6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A000D3B0293A7A9F00F02AB6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A01D1E80293C4AB100389D1D /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
+		A038583E29485A7300F18943 /* AlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +60,7 @@
 			children = (
 				A000D39F293A7A9E00F02AB6 /* AppDelegate.swift */,
 				A000D3A3293A7A9E00F02AB6 /* TaskListViewController.swift */,
+				A038583E29485A7300F18943 /* AlertController.swift */,
 				A01D1E80293C4AB100389D1D /* StorageManager.swift */,
 				A000D3AB293A7A9F00F02AB6 /* Assets.xcassets */,
 				A000D3AD293A7A9F00F02AB6 /* LaunchScreen.storyboard */,
@@ -138,6 +141,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A000D3AA293A7A9E00F02AB6 /* TaskList.xcdatamodeld in Sources */,
+				A038583F29485A7300F18943 /* AlertController.swift in Sources */,
 				A000D3A4293A7A9E00F02AB6 /* TaskListViewController.swift in Sources */,
 				A000D3A0293A7A9E00F02AB6 /* AppDelegate.swift in Sources */,
 				A01D1E81293C4AB100389D1D /* StorageManager.swift in Sources */,

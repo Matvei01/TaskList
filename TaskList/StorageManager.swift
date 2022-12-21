@@ -24,7 +24,7 @@ class StorageManager {
         return container
     }()
     
-    let context: NSManagedObjectContext
+    private let context: NSManagedObjectContext
     
     private init() {
         context = persistentContainer.viewContext
@@ -62,16 +62,6 @@ class StorageManager {
                                          insertInto: context) as? Task else { return }
         task.title = taskName
         compliition(task)
-        saveContext()
-    }
-    
-    func deleteTasks() {
-        let fetchRequest = Task.fetchRequest()
-        if let tasks = try? context.fetch(fetchRequest) {
-            for task in tasks {
-                context.delete(task)
-            }
-        }
         saveContext()
     }
     
