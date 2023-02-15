@@ -94,7 +94,7 @@ extension TaskListViewController {
     }
     
     @objc private func addNewTask() {
-        showSaveAndUpdateAlert()
+        showAlert()
     }
     
     private func fetchData() {
@@ -135,7 +135,7 @@ extension TaskListViewController {
 
 // MARK: - Alert Controllers
 extension TaskListViewController {
-    private func showSaveAndUpdateAlert(task: Task? = nil, completion: (() -> Void)? = nil) {
+    private func showAlert(task: Task? = nil, completion: (() -> Void)? = nil) {
         let title = task != nil ? "Update Task" : "New Task"
         let alert = UIAlertController.createAlertController(withTitle: title)
         
@@ -219,7 +219,7 @@ extension TaskListViewController {
             task = tasks[indexPath.row]
         }
         
-        showSaveAndUpdateAlert(task: task) {
+        showAlert(task: task) {
             tableView.reloadRows(at: [indexPath], with: .automatic)
         }
     }

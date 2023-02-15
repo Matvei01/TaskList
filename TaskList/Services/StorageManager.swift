@@ -51,7 +51,6 @@ class StorageManager {
             complition(.success(filteredTasks))
         } catch let error {
             complition(.failure(error))
-            
         }
     }
     
